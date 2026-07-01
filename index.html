@@ -426,6 +426,17 @@ var MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Se
 function mesSel(){var n=new Date();return new Date(n.getFullYear(),n.getMonth()+state.mesOffset,1)}
 function enMesSel(m){var d=parseD(m.fecha),s=mesSel();return d.getMonth()===s.getMonth()&&d.getFullYear()===s.getFullYear()}
 function cambiarMes(dir){if(state.mesOffset+dir>0)return;state.mesOffset+=dir;render()}
+// Si el mes actual no tiene movimientos pero hay datos previos, abre en el mes más reciente con datos.
+function mesTieneMovs(off){var s=state.mesOffset;state.mesOffset=off;var has=state.data.movimientos.some(enMesSel);state.mesOffset=s;return has;}
+function ajustarMesInicial(){
+  if(!state.data.movimientos.length) return;
+  if(mesTieneMovs(0)) return;
+  var maxd=null;state.data.movimientos.forEach(function(m){var d=parseD(m.fecha);if(!maxd||d>maxd)maxd=d;});
+  if(!maxd) return;
+  var n=new Date();
+  var off=(maxd.getFullYear()-n.getFullYear())*12+(maxd.getMonth()-n.getMonth());
+  if(off<0){state.mesOffset=off;render();}
+}
 
 /* =========================================================
    LÓGICA DE TARJETA DE CRÉDITO
@@ -868,7 +879,7 @@ function sincronizar(){
   document.getElementById('sync-info').textContent='Sincronizando…';
   fetch(state.url).then(function(r){return r.json()}).then(function(res){
     if(res&&res.ok&&res.data){
-      state.data=normaliza(res.data);persist();setConn(true);render();
+      state.data=normaliza(res.data);persist();setConn(true);render();ajustarMesInicial();
       document.getElementById('sync-info').textContent='✅ Conectado y sincronizado ('+state.data.movimientos.length+' mov., '+state.data.deudas.length+' préstamos).';
       toast('✅ Sincronizado');
     }else{setConn(false);document.getElementById('sync-info').textContent='⚠️ Respuesta inesperada del servidor.'}
@@ -925,7 +936,7 @@ function init(){
   document.getElementById('cfg-pago').value=state.pago;
   document.getElementById('cfg-url').value=state.url;
   setTipo('gasto');setFiltroDeuda('me_deben');
-  render();
+  render();ajustarMesInicial();
   if(state.url){setConn(true);sincronizar();}else setConn(false);
 }
 init();
