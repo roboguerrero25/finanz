@@ -7,11 +7,23 @@
 <title>Mis Finanzas</title>
 <link rel="manifest" href="manifest.json">
 <style>
+/* ---- Tema oscuro (por defecto) ---- */
 :root{
-  --primary:#6366f1; --primary2:#4f46e5;
-  --bg:#0a0a0f; --surface:#13131a; --surface2:#1c1c27;
-  --text:#f1f1f3; --muted:#8b8b9e; --faint:#4a4a5a; --line:#26263a;
-  --green:#10b981; --red:#ef4444; --amber:#f59e0b; --cyan:#06b6d4;
+  --primary:#818cf8; --primary2:#6366f1;
+  --bg:#0b0b0e; --surface:#15151a; --surface2:#1e1e25; --line:#282830;
+  --text:#ececef; --muted:#9595a1; --faint:#5b5b66;
+  --green:#34d399; --red:#f87171; --amber:#fbbf24; --cyan:#38bdf8;
+  --tc-bg:rgba(129,140,248,.15); --tc-fg:#c3c9ff;
+  --shadow:0 8px 28px rgba(0,0,0,.5);
+}
+/* ---- Tema claro ---- */
+:root[data-theme="light"]{
+  --primary:#4f46e5; --primary2:#4338ca;
+  --bg:#f6f7f9; --surface:#ffffff; --surface2:#eef0f3; --line:#e3e6ea;
+  --text:#16181d; --muted:#5f636b; --faint:#9aa0aa;
+  --green:#059669; --red:#dc2626; --amber:#b45309; --cyan:#0e7490;
+  --tc-bg:rgba(79,70,229,.10); --tc-fg:#4338ca;
+  --shadow:0 8px 24px rgba(20,25,40,.14);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;min-height:100vh;font-size:15px;line-height:1.5;padding-bottom:calc(74px + env(safe-area-inset-bottom))}
@@ -23,6 +35,10 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .dot{width:9px;height:9px;border-radius:50%;background:var(--faint);box-shadow:0 0 0 4px transparent}
 .dot.on{background:var(--green);box-shadow:0 0 0 4px rgba(16,185,129,.14)}
 .dot.off{background:var(--red);box-shadow:0 0 0 4px rgba(239,68,68,.14)}
+.hdr-right{display:flex;align-items:center;gap:12px}
+.icon-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--surface2);color:var(--muted);display:flex;align-items:center;justify-content:center}
+.icon-btn:active{transform:scale(.94)}
+.icon-btn svg{width:18px;height:18px}
 
 .screen{display:none;padding:18px 16px;max-width:640px;margin:0 auto}
 .screen.active{display:block}
@@ -49,7 +65,7 @@ h2.title{font-size:12px;color:var(--faint);font-weight:600;margin:20px 2px 10px;
 .amt{font-weight:600;font-size:15px;white-space:nowrap}
 .amt.pos{color:var(--green)} .amt.neg{color:var(--red)}
 .pill{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--surface2);color:var(--muted);white-space:nowrap}
-.pill.tc{background:rgba(99,102,241,.16);color:#a5b4fc}
+.pill.tc{background:var(--tc-bg);color:var(--tc-fg)}
 
 /* Inputs */
 label{display:block;font-size:13px;color:var(--muted);font-weight:500;margin:14px 0 6px}
@@ -91,7 +107,7 @@ select{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns=
 .sheet::before{content:"";display:block;width:38px;height:4px;border-radius:999px;background:var(--line);margin:6px auto 14px}
 .sheet h3{font-size:18px;font-weight:600;margin-bottom:2px}
 
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#26263a;color:var(--text);padding:12px 18px;border-radius:12px;font-size:14px;font-weight:500;box-shadow:0 8px 28px rgba(0,0,0,.5);opacity:0;transition:.3s;z-index:200;border:1px solid var(--line)}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--surface2);color:var(--text);padding:12px 18px;border-radius:12px;font-size:14px;font-weight:500;box-shadow:var(--shadow);opacity:0;transition:.3s;z-index:200;border:1px solid var(--line)}
 .toast.show{opacity:1;bottom:100px}
 
 .tag{display:inline-block;font-size:12px;font-weight:500;padding:6px 11px;border-radius:8px;margin:6px 6px 0 0;background:var(--surface2);color:var(--text);border:1px solid var(--line)}
@@ -114,8 +130,8 @@ select{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns=
 #alertBanner:empty{display:none}
 .alert{display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:13px;margin-bottom:12px;font-size:13.5px;line-height:1.45;font-weight:500}
 .alert svg{width:20px;height:20px;flex-shrink:0}
-.alert.warn{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:#fcd9a0}
-.alert.urgent{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.32);color:#fca5a5}
+.alert.warn{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.28);color:var(--amber)}
+.alert.urgent{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:var(--red)}
 .alert b{font-weight:700}
 
 /* Donut */
@@ -154,7 +170,10 @@ select{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns=
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3"/><path d="M21 12v-2a2 2 0 0 0-2-2h-4a2 2 0 0 0 0 4h4a2 2 0 0 0 2-2Z"/><circle cx="16" cy="12" r="1" fill="currentColor" stroke="none"/></svg>
     Mis Finanzas
   </h1>
-  <span class="dot" id="conn" title="Conexión"></span>
+  <div class="hdr-right">
+    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Cambiar tema"></button>
+    <span class="dot" id="conn" title="Conexión"></span>
+  </div>
 </div>
 
 <!-- ================= RESUMEN ================= -->
@@ -874,9 +893,33 @@ function abrirModal(id){document.getElementById(id).classList.add('open')}
 function cerrarModal(id){document.getElementById(id).classList.remove('open')}
 
 /* =========================================================
+   TEMA CLARO / OSCURO
+========================================================= */
+var ICON_SOL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>';
+var ICON_LUNA='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+function aplicarTema(t){
+  document.documentElement.setAttribute('data-theme',t);
+  var m=document.querySelector('meta[name="theme-color"]');
+  if(m)m.setAttribute('content',t==='light'?'#ffffff':'#0b0b0e');
+  var b=document.getElementById('themeBtn');
+  if(b)b.innerHTML=(t==='light')?ICON_LUNA:ICON_SOL;
+  LS.set('fin_theme',t);
+}
+function toggleTheme(){
+  var actual=document.documentElement.getAttribute('data-theme')==='light'?'light':'dark';
+  aplicarTema(actual==='light'?'dark':'light');
+}
+function initTema(){
+  var g=LS.get('fin_theme',null);
+  if(g!=='light'&&g!=='dark'){g=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';}
+  aplicarTema(g);
+}
+
+/* =========================================================
    INICIO
 ========================================================= */
 function init(){
+  initTema();
   document.getElementById('m-fecha').value=hoyISO();
   document.getElementById('cfg-cierre').value=state.cierre;
   document.getElementById('cfg-pago').value=state.pago;
